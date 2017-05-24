@@ -110,20 +110,13 @@
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
-    // map() is a useful primitive iteration function that works a lot
-    // like each(), but in addition to running the operation on all
-    // the members, it also maintains an array of results.
+    var results = []
+    _.each(collection, function(item) {
+      results.push(iterator(item));
+    });
+    return results;
   };
 
-  /*
-   * TIP: map is really handy when you want to transform an array of
-   * values into a new array of values. _.pluck() is solved for you
-   * as an example of this.
-   */
-
-  // Takes an array of objects and returns and array of the values of
-  // a certain property in it. E.g. take an array of people and return
-  // an array of just their ages
   _.pluck = function(collection, key) {
     // TIP: map is really handy when you want to transform an array of
     // values into a new array of values. _.pluck() is solved for you
@@ -154,6 +147,15 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+
+    _.each(collection, function(item) {
+      if(item === collection[0] && accumulator === undefined) {
+        accumulator = item;
+      } else {
+        accumulator = iterator(accumulator, item);
+      }
+    });
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -167,17 +169,33 @@
       return item === target;
     }, false);
   };
-
-
+  /*
+    [false, false, 0, null]     var identity = function(a) {return a}
+  */
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+
+    !iterator ? (iterator = (item) => item) : iterator;
+
+    return _.reduce(collection, function(itemsAreTrue, item)   {
+      var itemIsTrue = iterator(item);
+      return itemsAreTrue && itemIsTrue ? true : false;
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
-    // TIP: There's a very clever way to re-use every() here.
+
+    !iterator ? (iterator = (item) => item) : iterator;
+
+    var allAreFalse =  _.every(collection, function(item) {
+      var itemIsTrue = iterator(item);
+      return itemIsTrue ? false : true;
+    });
+
+    return allAreFalse ? false : true; 
+
   };
 
 
