@@ -146,16 +146,12 @@
   //     return total + number * number;
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
-  _.reduce = function(collection, iterator, accumulator) {
+  _.reduce = function(collection, iterator, acc) {
 
-    _.each(collection, function(item) {
-      if(item === collection[0] && accumulator === undefined) {
-        accumulator = item;
-      } else {
-        accumulator = iterator(accumulator, item);
-      }
-    });
-    return accumulator;
+    _.each(collection, (item) =>
+      item === collection[0] && acc === undefined ? acc = item : acc = iterator(acc, item)
+    );
+    return acc;
   };
 
   // Determine if the array or object contains a given value (using `===`).
