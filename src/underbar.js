@@ -96,6 +96,15 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
+    var uniqArr = [];
+    var uniqItems = new Set();
+    for (var item of array) {
+      uniqItems.add(item);
+    }
+    uniqItems.forEach(function(item) {
+      uniqArr.push(item);
+    })
+    return uniqArr;
   };
 
 
