@@ -284,7 +284,7 @@
   _.memoize = function(func) {
     var caches = {};
 
-    return (args) => {
+    return function(args){
       args = JSON.stringify(arguments);
       return !caches[args] ? caches[args] = func.apply(this, arguments) : caches[args];
     }
@@ -314,14 +314,14 @@
     var arrCopy = array.slice();
     var shuffleArr = [];
 
-    function genRandomIdx() { 
-      return Math.floor( Math.random() * arrCopy.length );
+    function genRIdx(length) {
+      return Math.floor(Math.random() * length);
     }
-    
+
     for(var i = 0; i < array.length; i++) {
-        var rIdx = genRandomIdx();
-        arrCopy.splice(rIdx, 1);
-        shuffleArr.push(arrCopy[rIdx]);
+      var rIdx = genRIdx(arrCopy.length - 1);
+      shuffleArr.push(arrCopy[rIdx]);
+      arrCopy.splice(rIdx, 1);w
     }
     
     return shuffleArr;
