@@ -31,14 +31,18 @@
 
   // Return an array of the first n elements of an array. If n is undefined,
   // return just the first element.
-  _.first = function(array, n) {
-    return n === undefined ? array[0] : array.slice(0, n);
-  };
+  _.first = (array, n) => n === undefined ? array[0] : array.slice(0, n);
+
 
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
-  _.last = function(array, n) {
-    return n === undefined ? array[array.length - 1] : n >= array.length ? array.slice() : array.slice(array.length - n);
+  _.last = (array, n, length) => {
+    length = array.length
+    if(n === undefined) {
+      return array[length - 1];
+    } else {
+      return n >= length ? array : array.slice(length - n);
+    }
   };
 
   // Call iterator(value, key, collection) for each element of collection.
@@ -67,19 +71,18 @@
     // it uses the iteration helper `each`, which you will need to write.
     var result = -1;
 
-    _.each(array, function(item, index) {
+    _.each(array, (item, index) => {
       if (item === target && result === -1) {
         result = index;
       }
     });
-
     return result;
   };
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
     var testItems = [];
-    _.each(collection, function(item) {
+    _.each(collection, (item) => {
       if(test(item)) {
         testItems.push(item);
       }
@@ -89,9 +92,7 @@
  
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
-    return _.filter(collection, function(item) {
-      return test(item) === false;
-    });
+    return _.filter(collection, (item) => test(item) === false);
   };
 
   // Produce a duplicate-free version of the array.
@@ -101,7 +102,7 @@
     for (var item of array) {
       uniqItems.add(item);
     }
-    uniqItems.forEach(function(item) {
+    uniqItems.forEach((item) => {
       uniqArr.push(item);
     })
     return uniqArr;
@@ -111,7 +112,7 @@
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
     var results = []
-    _.each(collection, function(item) {
+    _.each(collection, (item) => {
       results.push(iterator(item));
     });
     return results;
@@ -158,7 +159,7 @@
   _.contains = function(collection, target) {
     // TIP: Many iteration problems can be most easily expressed in
     // terms of reduce(). Here's a freebie to demonstrate!
-    return _.reduce(collection, function(wasFound, item) {
+    return _.reduce(collection, (wasFound, item) => {
       if (wasFound) {
         return true;
       }
@@ -173,7 +174,7 @@
 
     !iterator ? (iterator = (item) => item) : iterator;
 
-    return _.reduce(collection, function(itemsAreTrue, item)   {
+    return _.reduce(collection, (itemsAreTrue, item)  => {
       var itemIsTrue = iterator(item);
       return itemsAreTrue && itemIsTrue ? true : false;
     }, true);
@@ -185,13 +186,11 @@
 
     !iterator ? (iterator = (item) => item) : iterator;
 
-    var allAreFalse =  _.every(collection, function(item) {
+    var allAreFalse =  _.every(collection, (item) => {
       var itemIsTrue = iterator(item);
       return itemIsTrue ? false : true;
     });
-
     return allAreFalse ? false : true; 
-
   };
 
 
@@ -214,11 +213,32 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    var properties =  Array.apply(null, arguments).slice(1);
+    for(var extension of properties) {
+      for(var prop in extension) {
+        obj[prop] = extension[prop];
+      }
+    }
+    return obj;
   };
+  /*
+  extend notes: the extend function's first argument will be an obj
+    the following arguments then are also objects
+      //take the 
+  */
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var properties = Array.apply(null, arguments).slice(1);
+    for(var extension of properties) {
+      for(var prop in extension) {
+        if(obj[prop] === undefined) {
+          obj[prop] = extension[prop];
+        }
+      }
+    }
+    return obj;
   };
 
 
@@ -262,6 +282,12 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var caches = {};
+
+    return (args) => {
+      args = JSON.stringify(arguments);
+      return !caches[args] ? caches[args] = func.apply(this, arguments) : caches[args];
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -285,6 +311,20 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arrCopy = array.slice();
+    var shuffleArr = [];
+
+    function genRandomIdx() { 
+      return Math.floor( Math.random() * arrCopy.length );
+    }
+    
+    for(var i = 0; i < array.length; i++) {
+        var rIdx = genRandomIdx();
+        arrCopy.splice(rIdx, 1);
+        shuffleArr.push(arrCopy[rIdx]);
+    }
+    
+    return shuffleArr;
   };
 
 
