@@ -102,9 +102,9 @@
     for (var item of array) {
       uniqItems.add(item);
     }
-    uniqItems.forEach((item) => {
+    for(var item of uniqItems) {
       uniqArr.push(item);
-    })
+    }
     return uniqArr;
   };
 
@@ -148,7 +148,6 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, acc) {
-
     _.each(collection, (item) =>
       item === collection[0] && acc === undefined ? acc = item : acc = iterator(acc, item)
     );
@@ -297,6 +296,8 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var funcArgs = Array.apply(this, arguments).slice(2);
+    setTimeout(() => func.apply(this, funcArgs), wait);
   };
 
 
@@ -321,7 +322,7 @@
     for(var i = 0; i < array.length; i++) {
       var rIdx = genRIdx(arrCopy.length - 1);
       shuffleArr.push(arrCopy[rIdx]);
-      arrCopy.splice(rIdx, 1);w
+      arrCopy.splice(rIdx, 1);
     }
     
     return shuffleArr;
